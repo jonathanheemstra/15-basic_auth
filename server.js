@@ -10,12 +10,16 @@ const MONGODB_URI = process.env.MONGODB_URI || process.env.MONGODB_LOCAL_URI;
 const PORT = process.env.PORT;
 const app = express();
 
+const errors = require('./lib/error-middleware.js');
+
 dotenv.load();
 
 // mongoose.connect(MONGODB_URI);
 
 app.use(cors());
 app.use(morgan('dev'));
+
+app.use(errors);
 
 app.listen(PORT, () => {
   debug(`server up: ${PORT}`);
