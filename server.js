@@ -6,19 +6,20 @@ const cors = require('cors');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const MONGODB_URI = process.env.MONGODB_URI || process.env.MONGODB_LOCAL_URI;
 const PORT = process.env.PORT;
 const app = express();
 
 const errors = require('./lib/error-middleware.js');
+const authRouter = require('./route/auth-router.js');
 
 dotenv.load();
 
-// mongoose.connect(MONGODB_URI);
+mongoose.connect(process.env.MONGODB_URI);
 
 app.use(cors());
 app.use(morgan('dev'));
 
+app.use(authRouter);
 app.use(errors);
 
 app.listen(PORT, () => {
