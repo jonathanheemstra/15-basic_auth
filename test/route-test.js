@@ -5,7 +5,6 @@ const request = require('superagent');
 const mongoose = require('mongoose');
 const Promise = require('bluebird');
 const User = require('../model/user.js');
-const debug = require('debug')('fomogram:route-test');
 
 require('../server.js');
 
