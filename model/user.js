@@ -14,14 +14,16 @@ const userSchema = Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true},
   email: { type: String, required: true, unique: true },
-  findHash: { type: String, required: true }
+  findHash: { type: String, unique: true }
 });
 
 userSchema.methods.genPasswordHash = function(password) {
   debug('genPasswordHash');
 
   return new Promise((resolve, reject) => {
-    bcrypt.hash(password, 8, (err, hash) => {
+    bcrypt.hash(password, 10, (err, hash) => {
+      debug('genPasswordHash:bcrypt.hash');
+      if(!password) return reject(createError(400, 'provide a password'));
       if(err) return reject(err);
       this.password = hash;
       resolve(this);
@@ -34,6 +36,7 @@ userSchema.methods.comparePasswordHash = function(password) {
 
   return new Promise((resolve, reject) => {
     bcrypt.compare(password, this.password, (err, valid) => {
+      debug('comparePasswordHash:bcrypt.compare');
       if(err) return reject(err);
       if(!valid) return reject(createError(401, 'incorrect password'));
       resolve(this);
@@ -45,15 +48,21 @@ userSchema.methods.genfindHash = function() {
   debug('genfindHash');
 
   return new Promise((resolve, reject) => {
+    debug('genfindHash:newPromise');
     let attempts = 0;
 
     _genfindHash.call(this);
 
     function _genfindHash() {
-      this.findHash = crypto.randomBytes(64).toString('hex');
+      debug('genfindHash:newPromise:_genfindHash');
+      this.findHash = crypto.randomBytes(32).toString('hex');
       this.save()
-        .then( () => resolve(this.findHash))
+        .then( () => {
+          debug('genfindHash:newPromise:_genfindHash:then');
+          resolve(this.findHash);
+        })
         .catch( err => {
+          debug('genfindHash:newPromise:_genfindHash:catch');
           if(attempts > 3) return reject(err);
           attempts++;
           _genfindHash.call(this);
