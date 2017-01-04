@@ -34,6 +34,12 @@ galleryRouter.get('/api/gallery/:id', bearer, function(req, res, next) {
 
 galleryRouter.put('/api/gallery/:id', function(req, res, next) {
   debug('PUT: /api/gallery/:id');
+
+  Gallery.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    .then( gallery => {
+      return res.json(gallery);
+    })
+    .catch(next);
 });
 
 galleryRouter.delete('/api/gallery/:id', function(req, res, next) {

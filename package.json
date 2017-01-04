@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "DEBUG='fomogram*' gulp test",
-    "start": "DEBUG='fomogram*' gulp"
+    "start": "DEBUG='fomogram*' node server.js"
   },
   "repository": {
     "type": "git",
