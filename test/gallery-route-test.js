@@ -82,4 +82,48 @@ describe('Test Gallery Routes', function() {
       });
     });
   });
+  describe('GET: /api/galler/:id', () => {
+    before( done => {
+      testGallery.userID = this.tempUser._id.toString();
+      new Gallery(testGallery).save()
+        .then( gallery => {
+          this.tempGallery = gallery;
+          done();
+        })
+        .catch(done);
+    });
+    after( () => {
+      delete testGallery.userID;
+    });
+    describe('Valid Body', () => {
+      it('should return a token', done => {
+        request.get(`${url}/api/gallery/${this.tempGallery._id}`)
+          .set({ Authorization: `Bearer ${this.tempToken}` })
+          .end( (err, res) => {
+            if(err) return done(err);
+            expect(res.status).to.equal(200);
+            done();
+          });
+      });
+    });
+    describe('Invalid Request', () => {
+      it('should return 404', done => {
+        request.get(`${url}/api/gallery/12345`)
+          .set({ Authorization: `Bearer ${this.tempToken}` })
+          .end( res => {
+            expect(res.status).to.equal(404);
+            done();
+          });
+      });
+    });
+    describe('Invalid Request', () => {
+      it('should return 404', done => {
+        request.get(`${url}/api/gallery/${this.tempGallery._id}`)
+          .end( res => {
+            expect(res.status).to.equal(401);
+            done();
+          });
+      });
+    });
+  });
 });
