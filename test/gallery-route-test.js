@@ -25,7 +25,21 @@ const testGallery = {
 };
 
 describe('Test Gallery Routes', function() {
-  afterEach( done => {
+  before( done => {
+    new User(testUser)
+      .genPasswordHash(testUser.password)
+      .then( user =>  user.save())
+      .then( user => {
+        this.tempUser = user;
+        return user.genToken();
+      })
+      .then( token => {
+        this.tempToken = token;
+        done();
+      })
+      .catch(done);
+  });
+  after( done => {
     Promise.all([
       Gallery.remove({}),
       User.remove({})
@@ -34,20 +48,6 @@ describe('Test Gallery Routes', function() {
     .catch(done);
   });
   describe('POST: /api/gallery', () => {
-    before( done => {
-      new User(testUser)
-        .genPasswordHash(testUser.password)
-        .then( user =>  user.save())
-        .then( user => {
-          this.tempUser = user;
-          return user.genToken();
-        })
-        .then( token => {
-          this.tempToken = token;
-          done();
-        })
-        .catch(done);
-    });
     describe('Valid Body', () => {
       it('should return a token', done => {
         request.post(`${url}/api/gallery`)
@@ -61,9 +61,9 @@ describe('Test Gallery Routes', function() {
       });
     });
     describe('Invalid Body', () => {
-      it('should fail to return a token', done => {
+      it('should not return a token', done => {
         request.post(`${url}/api/gallery`)
-          .send()
+          .send({})
           .set({ Authorization: `Bearer ${this.tempToken}`})
           .end( res => {
             expect(res.status).to.equal(400);
