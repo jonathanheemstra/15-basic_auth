@@ -6,8 +6,6 @@ const mongoose = require('mongoose');
 const Promise = require('bluebird');
 const User = require('../model/user.js');
 
-require('../server.js');
-
 const PORT = process.env.PORT;
 const url = `http://localhost:${PORT}`;
 

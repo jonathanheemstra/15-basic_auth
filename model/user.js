@@ -22,7 +22,6 @@ userSchema.methods.genPasswordHash = function(password) {
 
   return new Promise((resolve, reject) => {
     bcrypt.hash(password, 10, (err, hash) => {
-      debug('genPasswordHash:bcrypt.hash');
       if(!password) return reject(createError(400, 'provide a password'));
       if(err) return reject(err);
       this.password = hash;
@@ -36,7 +35,6 @@ userSchema.methods.comparePasswordHash = function(password) {
 
   return new Promise((resolve, reject) => {
     bcrypt.compare(password, this.password, (err, valid) => {
-      debug('comparePasswordHash:bcrypt.compare');
       if(err) return reject(err);
       if(!valid) return reject(createError(401, 'incorrect password'));
       resolve(this);
@@ -48,21 +46,15 @@ userSchema.methods.genfindHash = function() {
   debug('genfindHash');
 
   return new Promise((resolve, reject) => {
-    debug('genfindHash:newPromise');
     let attempts = 0;
 
     _genfindHash.call(this);
 
     function _genfindHash() {
-      debug('genfindHash:newPromise:_genfindHash');
       this.findHash = crypto.randomBytes(32).toString('hex');
       this.save()
-        .then( () => {
-          debug('genfindHash:newPromise:_genfindHash:then');
-          resolve(this.findHash);
-        })
+        .then( () => resolve(this.findHash))
         .catch( err => {
-          debug('genfindHash:newPromise:_genfindHash:catch');
           if(attempts > 3) return reject(err);
           attempts++;
           _genfindHash.call(this);
