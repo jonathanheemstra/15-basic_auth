@@ -3,9 +3,6 @@
 const gulp = require('gulp');
 const eslint = require('gulp-eslint');
 const mocha = require('gulp-mocha');
-const nodemon = require('gulp-nodemon');
-const debug = require('debug')('fomogram:gulpfile');
-
 
 gulp.task('lint', function() {
   gulp.src(['**/*.js', '**/*/*.js', '!node_modules'])
@@ -20,22 +17,7 @@ gulp.task('test', function() {
 });
 
 gulp.task('dev', function() {
-  var stream = nodemon({
-    script: 'server.js',
-    ext: 'js html',
-    ignore: ['node_modules'],
-    watch: ['*'],
-    env: { 'NODE_ENV': 'development' },
-    tasks: ['lint', 'test']
-  });
-  stream
-    .on('restart', function() {
-      debug('Restarted Server');
-    })
-    .on('crash', function() {
-      debug('Applicaiton has crashed');
-      stream.emit('restart', 5);
-    });
+  gulp.watch(['*/**.js', '*/**/*.js', '!node_modules/**'], ['lint', 'test']);
 });
 
 gulp.task('default', ['dev']);
