@@ -11,6 +11,7 @@ const app = express();
 
 const errors = require('./lib/error-middleware.js');
 const authRouter = require('./route/auth-router.js');
+const galleryRouter = require('./route/gallery-router.js');
 
 dotenv.load();
 
@@ -20,6 +21,7 @@ app.use(cors());
 app.use(morgan('dev'));
 
 app.use(authRouter);
+app.use(galleryRouter);
 app.use(errors);
 
 app.listen(PORT, () => {
