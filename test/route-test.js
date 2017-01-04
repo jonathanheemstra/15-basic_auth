@@ -65,7 +65,6 @@ describe('Authorization Routes', function() {
             done();
           })
           .catch( err => {
-            console.log('err', err);
             return done(err);
           });
       });

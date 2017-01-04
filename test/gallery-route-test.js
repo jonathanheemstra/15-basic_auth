@@ -4,7 +4,6 @@ const expect = require('chai').expect;
 const mongoose = require('mongoose');
 const Promise = require('bluebird');
 const request = require('superagent');
-const debug = require('debug')('fomogram:gallery-route-test');
 const User = require('../model/user.js');
 const Gallery = require('../model/gallery.js');
 
@@ -39,22 +38,10 @@ describe('Test Gallery Routes', function() {
       })
       .catch(done);
   });
-  before( done => {
-    testGallery.userID = this.tempUser._id.toString();
-    new Gallery(testGallery).save()
-      .then( gallery => {
-        this.tempGallery = gallery;
-        done();
-      })
-      .catch(done);
-  });
-  after( () => {
-    delete testGallery.userID;
-  });
   after( done => {
     Promise.all([
       Gallery.remove({}),
-      // User.remove({})
+      User.remove({})
     ])
     .then( () => done())
     .catch(done);
@@ -94,7 +81,20 @@ describe('Test Gallery Routes', function() {
       });
     });
   });
-  describe('GET: /api/galler/:id', () => {
+
+  describe('GET: /api/gallery/:id', () => {
+    before( done => {
+      testGallery.userID = this.tempUser._id.toString();
+      new Gallery(testGallery).save()
+        .then( gallery => {
+          this.tempGallery = gallery;
+          done();
+        })
+        .catch(done);
+    });
+    after( () => {
+      delete testGallery.userID;
+    });
     describe('Valid Body', () => {
       it('should return a token', done => {
         request.get(`${url}/api/gallery/${this.tempGallery._id}`)
@@ -126,18 +126,56 @@ describe('Test Gallery Routes', function() {
       });
     });
   });
+
+  describe('GET: /api/gallery', () => {
+    before( done => {
+      testGallery.userID = this.tempUser._id.toString();
+      new Gallery(testGallery).save()
+        .then( gallery => {
+          this.tempGallery = gallery;
+          done();
+        })
+        .catch(done);
+    });
+    after( () => {
+      delete testGallery.userID;
+    });
+    describe('Valid Body', () => {
+      it('should return all galleries', done => {
+        request.get(`${url}/api/gallery`)
+          .set({ Authorization: `Bearer ${this.tempToken}` })
+          .end( (err, res) => {
+            if(err) return done(err);
+            expect(res.status).to.equal(200);
+            done();
+          });
+      });
+    });
+  });
+
   describe('PUT: /api/gallery/:id', () => {
+    before( done => {
+      testGallery.userID = this.tempUser._id.toString();
+      new Gallery(testGallery).save()
+        .then( gallery => {
+          this.tempGallery = gallery;
+          done();
+        })
+        .catch(done);
+    });
+    after( () => {
+      delete testGallery.userID;
+    });
     describe('Valid Body', () => {
       it('should return a new gallery', done => {
-        var updated = { name: 'Updated Name' };
+        var updated = { name: 'Updated Name', description:'updated description' };
         request.put(`${url}/api/gallery/${this.tempGallery._id}`)
           .send(updated)
           .set({ Authorization: `Bearer ${this.tempToken}` })
           .end( (err, res) => {
             if(err) return done(err);
-            debug('tempGallery', this.tempGallery);
             expect(res.status).to.equal(200);
-            expect(this.tempGallery.name).to.equal(updated.name);
+            expect(res.body.name).to.equal(updated.name);
             done();
           });
       });
@@ -155,9 +193,9 @@ describe('Test Gallery Routes', function() {
     });
     describe('Invalid Body', () => {
       it('should return a new gallery', done => {
-        var updated = {};
+        var brokenUpdate = { name: 5 };
         request.put(`${url}/api/gallery/${this.tempGallery._id}`)
-          .send(updated)
+          .send(brokenUpdate)
           .set({ Authorization: `Bearer ${this.tempToken}` })
           .end( res => {
             expect(res.status).to.equal(400);
@@ -177,5 +215,24 @@ describe('Test Gallery Routes', function() {
           });
       });
     });
+  });
+
+  describe('DELETE: /api/gallery/:id', () => {
+    it('should delete the requested data object and return 204', done => {
+      request.delete(`${url}/api/gallery/${this.tempGallery._id}`)
+        .end( (err, res) => {
+          if(err) return done(err);
+          expect(res.status).to.equal(204);
+          done();
+        });
+    });
+    it('should return a bad request 400 error', done => {
+      request.delete(`${url}/api/gallery/12345`)
+        .end( res => {
+          expect(res.status).to.equal(404);
+          done();
+        });
+    });
+
   });
 });
