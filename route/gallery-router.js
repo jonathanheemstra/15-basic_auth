@@ -47,7 +47,6 @@ galleryRouter.get('/api/gallery/:id', bearer, function(req, res, next) {
 
 galleryRouter.put('/api/gallery/:id', bearer, jsonParser, function(req, res, next) {
   debug('PUT: /api/gallery/:id');
-  debugger;
   Gallery.findByIdAndUpdate(req.params.id, req.body, { new: true })
     .then( gallery => {
       if(gallery.userID.toString() !== req.user._id.toString()) {
