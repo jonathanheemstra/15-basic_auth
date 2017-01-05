@@ -24,6 +24,8 @@ app.use(authRouter);
 app.use(galleryRouter);
 app.use(errors);
 
-app.listen(PORT, () => {
+const server = module.exports = app.listen(PORT, () => {
   debug(`server up: ${PORT}`);
 });
+
+server.isRunning = true;

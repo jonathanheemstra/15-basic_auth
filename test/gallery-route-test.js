@@ -6,27 +6,26 @@ const Promise = require('bluebird');
 const request = require('superagent');
 const User = require('../model/user.js');
 const Gallery = require('../model/gallery.js');
+const server = require('../server.js');
+const serverController = require('./lib/server-controller.js');
+const beforeController = require('./lib/before-controller.js');
+const afterController = require('./lib/after-controller.js');
+const mockData = require('./lib/mockData.js');
 
-require('../server.js');
 const url = `http://localhost:${process.env.PORT}`;
 
 mongoose.Promise = Promise;
 
-const testUser = {
-  username: 'test user',
-  password: 'testpassword',
-  email: 'test@test.com'
-};
-
-const testGallery = {
-  name: 'test gallery',
-  description: 'test gallery description'
-};
-
 describe('Test Gallery Routes', function() {
   before( done => {
-    new User(testUser)
-      .genPasswordHash(testUser.password)
+    serverController.serverOpen(server, done);
+  });
+  after( done => {
+    serverController.serverClose(server, done);
+  });
+  before( done => {
+    new User(mockData.testUser)
+      .genPasswordHash(mockData.testUser.password)
       .then( user =>  user.save())
       .then( user => {
         this.tempUser = user;
@@ -39,18 +38,13 @@ describe('Test Gallery Routes', function() {
       .catch(done);
   });
   after( done => {
-    Promise.all([
-      Gallery.remove({}),
-      User.remove({})
-    ])
-    .then( () => done())
-    .catch(done);
+    afterController.removeGalleryAndUser(done);
   });
   describe('POST: /api/gallery', () => {
     describe('Valid Body', () => {
       it('should return a token', done => {
         request.post(`${url}/api/gallery`)
-          .send(testGallery)
+          .send(mockData.testGallery)
           .set({ Authorization: `Bearer ${this.tempToken}`})
           .end( (err, res) => {
             if(err) return done(err);
@@ -73,7 +67,7 @@ describe('Test Gallery Routes', function() {
     describe('Invalid Token', () => {
       it('should fail because there is no token', done => {
         request.post(`${url}/api/gallery`)
-        .send(testGallery)
+        .send(mockData.testGallery)
         .end( res => {
           expect(res.status).to.equal(401);
           done();
@@ -84,8 +78,8 @@ describe('Test Gallery Routes', function() {
 
   describe('GET: /api/gallery/:id', () => {
     before( done => {
-      testGallery.userID = this.tempUser._id.toString();
-      new Gallery(testGallery).save()
+      mockData.testGallery.userID = this.tempUser._id.toString();
+      new Gallery(mockData.testGallery).save()
         .then( gallery => {
           this.tempGallery = gallery;
           done();
@@ -93,7 +87,7 @@ describe('Test Gallery Routes', function() {
         .catch(done);
     });
     after( () => {
-      delete testGallery.userID;
+      afterController.deleteTestGalleryUserId;
     });
     describe('Valid Body', () => {
       it('should return a token', done => {
@@ -129,8 +123,8 @@ describe('Test Gallery Routes', function() {
 
   describe('GET: /api/gallery', () => {
     before( done => {
-      testGallery.userID = this.tempUser._id.toString();
-      new Gallery(testGallery).save()
+      mockData.testGallery.userID = this.tempUser._id.toString();
+      new Gallery(mockData.testGallery).save()
         .then( gallery => {
           this.tempGallery = gallery;
           done();
@@ -138,7 +132,7 @@ describe('Test Gallery Routes', function() {
         .catch(done);
     });
     after( () => {
-      delete testGallery.userID;
+      afterController.deleteTestGalleryUserId;
     });
     describe('Valid Body', () => {
       it('should return all galleries', done => {
@@ -155,8 +149,8 @@ describe('Test Gallery Routes', function() {
 
   describe('PUT: /api/gallery/:id', () => {
     before( done => {
-      testGallery.userID = this.tempUser._id.toString();
-      new Gallery(testGallery).save()
+      mockData.testGallery.userID = this.tempUser._id.toString();
+      new Gallery(mockData.testGallery).save()
         .then( gallery => {
           this.tempGallery = gallery;
           done();
@@ -164,7 +158,7 @@ describe('Test Gallery Routes', function() {
         .catch(done);
     });
     after( () => {
-      delete testGallery.userID;
+      afterController.deleteTestGalleryUserId;
     });
     describe('Valid Body', () => {
       it('should return a new gallery', done => {
