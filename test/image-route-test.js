@@ -27,36 +27,37 @@ describe('Image Routes', function() {
   });
 
   describe('POST: /api/gallery/:galleryID/image', function() {
+    before( done => {
+      new User(mockData.testUser)
+        .genPasswordHash(mockData.testUser.password)
+        .then( user =>  user.save())
+        .then( user => {
+          this.tempUser = user;
+          return user.genToken();
+        })
+        .then( token => {
+          this.tempToken = token;
+          done();
+        })
+        .catch(done);
+    });
+    after( done => {
+      afterController.removeGalleryAndUser(done);
+    });
     describe('Valid Token & Data', function() {
-      before( done => {
-        new User(mockData.testUser)
-          .genPasswordHash(mockData.testUser.password)
-          .then( user => user.save())
-          .then( user => {
-            this.tempUser = user;
-            return user.genToken();
-          })
-          .then( token => {
-            this.tempToken = token;
-            done();
-          })
-          .catch(done);
-      });
       before( done => {
         mockData.testGallery.userID = this.tempUser._id.toString();
         new Gallery(mockData.testGallery).save()
-          .then( gallery => {
-            this.tempGallery = gallery;
-            done();
-          })
-          .catch(done);
+        .then( gallery => {
+          this.tempGallery = gallery;
+          done();
+        })
+        .catch(done);
       });
       after( done => {
-        delete mockData.testGallery.userID;
-        done();
+        afterController.deleteTestGalleryUserId(done);
       });
-
-      it.only('should return a pic', done => {
+      it('should return a pic', done => {
         request.post(`${url}/api/gallery/${this.tempGallery._id}/image`)
           .set({ Authorization: `Bearer ${this.tempToken}`})
           .field('name', mockData.testImage.name)
@@ -72,6 +73,18 @@ describe('Image Routes', function() {
   });
 
   describe('DELETE: /api/gallery/:galleryID/image/:imageID', () => {
+    before( done => {
+      mockData.testGallery.userID = this.tempUser._id.toString();
+      new Gallery(mockData.testGallery).save()
+      .then( gallery => {
+        this.tempGallery = gallery;
+        done();
+      })
+      .catch(done);
+    });
+    after( done => {
+      afterController.deleteTestGalleryUserId(done);
+    });
     it('should delete the requested data object and return 204', done => {
       request.delete(`${url}/api/gallery/${this.tempGallery._id}/image/`)
         .end( (err, res) => {
