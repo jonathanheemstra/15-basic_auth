@@ -30,7 +30,7 @@ function s3uploadProm(params) {
   });
 }
 
-imageRouter.post('/api/gallery/:imageID/image', bearer, upload.single('image'), function(req, res, next) {
+imageRouter.post('/api/gallery/:galleryID/image', bearer, upload.single('image'), function(req, res, next) {
   if(!req.file) return next(createError(400, 'no file found'));
   if(!req.file.path) return next(createError(500, 'file not saved'));
 
@@ -59,4 +59,8 @@ imageRouter.post('/api/gallery/:imageID/image', bearer, upload.single('image'), 
     })
     .then( image => res.json(image))
     .catch(next);
+});
+
+imageRouter.delete('/api/gallery/:galleryID/image/:imageID', bearer, upload.single('image'), function(req, res, next) {
+
 });
