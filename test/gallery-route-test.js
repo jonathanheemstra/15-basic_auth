@@ -193,11 +193,11 @@ describe('Test Gallery Routes', function() {
     });
     describe('Invalid Body', () => {
       it('should return a new gallery', done => {
-        var brokenUpdate = { name: 5 };
         request.put(`${url}/api/gallery/${this.tempGallery._id}`)
-          .send(brokenUpdate)
+          .send({ name: 5 })
           .set({ Authorization: `Bearer ${this.tempToken}` })
           .end( res => {
+            console.log(res);
             expect(res.status).to.equal(400);
             done();
           });
