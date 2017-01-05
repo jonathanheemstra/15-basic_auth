@@ -191,7 +191,7 @@ _Note: you will need to be in the root file directory of the application in orde
 
 ### DELETE - Image Upload
 #### `/api/gallery/:galleryID/image/:imageID`
-* Upload a new image to Amazon S3 via a POST request using HTTPie by using the following terminal command:
+* Delete an image that was uploaded to Amazon S3 via a DELETE request using HTTPie by using the following terminal command:
   * `http DELETE :<PORT>/api/gallery/<GALLERY ID>/image/<IMAGE ID> Authorization:'Bearer <TOKEN>'`
   * _Example of Image Id_: `586e8977a30848b585214df0`
 
