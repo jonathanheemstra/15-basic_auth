@@ -4,32 +4,33 @@ const expect = require('chai').expect;
 const request = require('superagent');
 const mongoose = require('mongoose');
 const Promise = require('bluebird');
-const User = require('../model/user.js');
-
-require('../server.js');
+const server = require('../server.js');
+const serverController = require('./lib/server-controller.js');
+const beforeController = require('./lib/before-controller.js');
+const afterController = require('./lib/after-controller.js');
+const mockData = require('./lib/mockData.js');
 
 const PORT = process.env.PORT;
 const url = `http://localhost:${PORT}`;
 
 mongoose.promise = Promise;
 
-const exampleUser = {
-  username: 'test user',
-  password: 'testpassword',
-  email: 'test_user@test.com'
-};
-
 describe('Authorization Routes', function() {
+  before( done => {
+    serverController.serverOpen(server, done);
+  });
+  after( done => {
+    serverController.serverClose(server, done);
+  });
+
   describe('POST: /api/signup', function() {
+    afterEach( done => {
+      afterController.removeUser(done);
+    });
     describe('Valid Body', function() {
-      after( done => {
-        User.remove({})
-          .then( () => done())
-          .catch(done);
-      });
       it('should return a token', done => {
         request.post(`${url}/api/signup`)
-          .send(exampleUser)
+          .send(mockData.testUser)
           .end((err, res) => {
             if(err) return done(err);
             expect(res.status).to.equal(200);
@@ -38,11 +39,6 @@ describe('Authorization Routes', function() {
       });
     });
     describe('Invalid Body', function() {
-      after( done => {
-        User.remove({})
-          .then( () => done())
-          .catch(done);
-      });
       it('should respond with a status of 400', done => {
         request.post(`${url}/api/signup`)
           .send({})
@@ -55,24 +51,13 @@ describe('Authorization Routes', function() {
   });
 
   describe('GET: /api/signin', function() {
+    beforeEach( done => {
+      beforeController.createUser(done);
+    });
+    afterEach( done => {
+      afterController.removeUser(done);
+    });
     describe('Valid Body', function() {
-      before( done => {
-        let user = new User(exampleUser);
-        user.genPasswordHash(exampleUser.password)
-          .then( user => user.save())
-          .then( user => {
-            this.tempUser = user;
-            done();
-          })
-          .catch( err => {
-            return done(err);
-          });
-      });
-      after( done => {
-        User.remove({})
-          .then( () => done())
-          .catch(done);
-      });
       it('should return a token', done => {
         request.get(`${url}/api/signin`)
           .auth('test user', 'testpassword')
@@ -84,21 +69,6 @@ describe('Authorization Routes', function() {
       });
     });
     describe('Invalid Body', function() {
-      before( done => {
-        let user = new User(exampleUser);
-        user.genPasswordHash(exampleUser.password)
-          .then( user => user.save())
-          .then( user => {
-            this.tempUser = user;
-            done();
-          })
-          .catch(done);
-      });
-      after( done => {
-        User.remove({})
-          .then( () => done())
-          .catch(done);
-      });
       it('should return an error for invalid password', done => {
         request.get(`${url}/api/signin`)
           .auth('test user', 'incorrecttestpassword')
