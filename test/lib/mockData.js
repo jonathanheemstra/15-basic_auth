@@ -12,3 +12,9 @@ exports.testGallery = {
   name: 'test gallery',
   description: 'test gallery description'
 };
+
+exports.testImage = {
+  name: 'test image',
+  desc: 'test image description',
+  image: `${__dirname}/../../test/data/tester.png`
+};

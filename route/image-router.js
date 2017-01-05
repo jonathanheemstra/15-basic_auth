@@ -49,12 +49,13 @@ imageRouter.post('/api/gallery/:galleryID/image', bearer, upload.single('image')
       del([`${images}/*`]);
       let imageData = {
         name: req.body.name,
-        desc: req.body.description,
+        description: req.body.description,
         objectKey: s3data.Key,
         imageURI: s3data.Location,
         userID: req.user._id,
         galleryID: req.params.galleryID
       };
+      debugger;
       return new Image(imageData).save();
     })
     .then( image => res.json(image))
