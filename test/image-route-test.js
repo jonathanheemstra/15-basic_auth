@@ -56,7 +56,7 @@ describe('Image Routes', function() {
         done();
       });
 
-      it('should return a pic', done => {
+      it.only('should return a pic', done => {
         request.post(`${url}/api/gallery/${this.tempGallery._id}/image`)
           .set({ Authorization: `Bearer ${this.tempToken}`})
           .field('name', mockData.testImage.name)

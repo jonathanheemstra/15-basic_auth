@@ -31,7 +31,10 @@ function s3uploadProm(params) {
 }
 
 imageRouter.post('/api/gallery/:galleryID/image', bearer, upload.single('image'), function(req, res, next) {
-  if(!req.file) return next(createError(400, 'no file found'));
+  if(!req.file) {
+    debug('!req.file');
+    return next(createError(400, 'no file found'));
+  }
   if(!req.file.path) return next(createError(500, 'file not saved'));
 
   let ext = path.extname(req.file.originalname);
