@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "DEBUG='fomogram*' gulp test",
+    "test": "DEBUG='fomogram*' mocha",
     "start": "DEBUG='fomogram*' node server.js"
   },
   "repository": {
