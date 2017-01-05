@@ -209,3 +209,7 @@ _Note: you will need to be in the root file directory of the application in orde
   ```
 
   ```
+
+http --form :8080/api/gallery/586ea6b14ffc77c0c7142728/image Authorization:'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjE5MzMzYjg1YzdmNGU2ZmRkYjU4NWQ1YjE1NDIwMWFhMjRiYjEyZWM3OTUxNDI0MGRjYmZlNzU1ODBjYjhmM2QiLCJpYXQiOjE0ODM2NDY2MDh9.3RQBGmo2YGCTCiqVLkTA6Tz_wr97fjjINFV3_0mALQk' name='stuff' description='cool' image@/Users/jonny_heemstra/codefellows/401/lab-jonny/15-basic_auth/test/data/tester.png
+
+http DELETE :8080/api/gallery/586ea6b14ffc77c0c7142728/image/586ea77a4ffc77c0c7142729 Authorization:'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjE5MzMzYjg1YzdmNGU2ZmRkYjU4NWQ1YjE1NDIwMWFhMjRiYjEyZWM3OTUxNDI0MGRjYmZlNzU1ODBjYjhmM2QiLCJpYXQiOjE0ODM2NDY2MDh9.3RQBGmo2YGCTCiqVLkTA6Tz_wr97fjjINFV3_0mALQk'

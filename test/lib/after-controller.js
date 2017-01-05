@@ -32,6 +32,7 @@ exports.removeGalleryUserAndImage = function(done) {
   .catch(done);
 };
 
-exports.deleteTestGalleryUserId = function() {
+exports.deleteTestGalleryUserId = function(done) {
   delete mockData.testGallery.userID;
+  done();
 };

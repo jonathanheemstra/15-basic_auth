@@ -19,19 +19,6 @@ galleryRouter.post('/api/gallery', bearer, jsonParser, function(req, res, next) 
     .catch(next);
 });
 
-galleryRouter.get('/api/gallery', bearer, function(req, res, next) {
-  debug('GET: /api/gallery');
-
-  Gallery.find({})
-    .then( gallery => {
-      if(gallery.userID.toString() !== req.user._id.toString()) {
-        return next(createError(401, 'invalid user'));
-      }
-      return res.json(gallery);
-    })
-    .catch( err => next(createError(500, err.message)));
-});
-
 galleryRouter.get('/api/gallery/:id', bearer, function(req, res, next) {
   debug('GET: /api/gallery/:id');
 

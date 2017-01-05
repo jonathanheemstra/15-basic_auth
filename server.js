@@ -6,7 +6,6 @@ const cors = require('cors');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const PORT = process.env.PORT;
 const app = express();
 
 const errors = require('./lib/error-middleware.js');
@@ -16,6 +15,7 @@ const imageRouter = require('./route/image-router.js');
 
 dotenv.load();
 
+const PORT = process.env.PORT;
 mongoose.connect(process.env.MONGODB_URI);
 
 app.use(cors());

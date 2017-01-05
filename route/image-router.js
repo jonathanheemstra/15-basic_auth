@@ -65,12 +65,20 @@ imageRouter.post('/api/gallery/:galleryID/image', bearer, upload.single('image')
 });
 
 imageRouter.delete('/api/gallery/:galleryID/image/:imageID', bearer, function(req, res, next) {
-  let params = {
-    Bucket: process.env.AWS_BUCKET,
-    Key: req.params.imageID
-  };
   debugger;
-  s3.deleteObject(params)
-    .then( () => res.status(200).send())
-    .catch( err => next(createError(404, err.message)));
+  // let params = {
+  //   Bucket: process.env.AWS_BUCKET,
+  //   Key: req.params.imageID
+  // };
+
+  Gallery.findById(req.params.galleryID)
+    .then( gallery => {
+      console.log(gallery);
+    });
+    // .then( () => {
+    //   s3.deleteObject(params);
+    // })
+    // .then( () => Gallery.findByIdAndRemove(req.params.id))
+    // .then( () => res.status(200).send())
+    // .catch( err => next(createError(404, err.message)));
 });
