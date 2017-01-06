@@ -38,3 +38,4 @@ jspm_packages
 
 # Environment Variables
 .env
+.coveralls.yml

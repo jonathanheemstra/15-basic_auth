@@ -175,7 +175,7 @@ describe('Test Gallery Routes', function() {
     //   });
     // });
 
-    
+
     describe('Valid Body', () => {
       it('should return a new gallery', done => {
         var updated = { name: 'Updated Name' };

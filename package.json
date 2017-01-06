@@ -4,8 +4,11 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "DEBUG='fomogram*' mocha",
-    "start": "DEBUG='fomogram*' node server.js"
+    "test": "DEBUG='fomogram*' gulp test",
+    "start": "DEBUG='fomogram*' node server.js",
+    "eslint": "gulp lint",
+    "coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "gulp": "gulp"
   },
   "repository": {
     "type": "git",
@@ -21,8 +24,11 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-http": "^3.0.0",
+    "coveralls": "^2.11.15",
     "gulp": "^3.9.1",
+    "gulp-cache": "^0.4.5",
     "gulp-eslint": "^3.0.1",
+    "gulp-istanbul": "^1.1.1",
     "gulp-mocha": "^3.0.1",
     "gulp-nodemon": "^2.2.1",
     "mocha": "^3.2.0",

@@ -3,6 +3,8 @@
 const gulp = require('gulp');
 const eslint = require('gulp-eslint');
 const mocha = require('gulp-mocha');
+const cache = require('gulp-cache');
+const istanbul = require('gulp-istanbul');
 
 gulp.task('lint', function() {
   gulp.src(['**/*.js', '**/*/*.js', '!node_modules'])
@@ -11,9 +13,17 @@ gulp.task('lint', function() {
     .pipe(eslint.failAfterError());
 });
 
-gulp.task('test', function() {
-  gulp.src(['./test/*.js', '!node_modules'], { read: false })
-    .pipe(mocha( { report: 'nyan' } ));
+gulp.task('pre-test', function() {
+  return gulp.src(['./lib/*.js', './model/*.js', '!node_modules/**'])
+    .pipe(istanbul())
+    .pipe(istanbul.hookRequire());
+});
+
+gulp.task('test', ['pre-test'], function() {
+  gulp.src('./test/*-test.js', { read: false})
+  .pipe(mocha({ report: 'spec'}))
+  .pipe(istanbul.writeReports())
+  .pipe(istanbul.enforceThresholds({thresholds: {global: 90}}));
 });
 
 gulp.task('dev', function() {
@@ -21,3 +31,9 @@ gulp.task('dev', function() {
 });
 
 gulp.task('default', ['dev']);
+
+
+
+gulp.task('clear', function (done) {
+  return cache.clearAll(done);
+});

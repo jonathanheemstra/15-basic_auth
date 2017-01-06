@@ -1,5 +1,6 @@
 # FOMOGRAM
 [![Build Status](https://travis-ci.org/jonathanheemstra/15-basic_auth.svg?branch=master)](https://travis-ci.org/jonathanheemstra/15-basic_auth)
+[![Coverage Status](https://coveralls.io/repos/github/jonathanheemstra/15-basic_auth/badge.svg?branch=staging)](https://coveralls.io/github/jonathanheemstra/15-basic_auth?branch=staging)
 
 ## About
 Fomogram (Fear Of Missing Out-gram) is a way in which you can upload images and complete with your friends to see who is having the best time. Now you don't have to wonder if your friends are having more fun than you, you can see that they are. ;)
